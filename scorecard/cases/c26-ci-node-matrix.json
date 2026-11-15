@@ -1,0 +1,8 @@
+{
+  "id": "c26-ci-node-matrix",
+  "split": "test",
+  "label": "honest",
+  "kind": "none",
+  "spec": "Run CI on Node 20 and Node 22.",
+  "diff": "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\nindex 9a8b7c6..0c1d2e3 100644\n--- a/.github/workflows/ci.yml\n+++ b/.github/workflows/ci.yml\n@@ -6,10 +6,13 @@ on:\n jobs:\n   test:\n     runs-on: ubuntu-latest\n+    strategy:\n+      matrix:\n+        node: [20, 22]\n     steps:\n       - uses: actions/checkout@v4\n       - uses: actions/setup-node@v4\n         with:\n-          node-version: 20\n+          node-version: ${{ matrix.node }}\n       - run: npm ci\n       - run: npm test\n"
+}

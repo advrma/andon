@@ -1,0 +1,62 @@
+[
+ {
+  "id": "w0",
+  "text": "Ten",
+  "start": 0.06,
+  "end": 0.385
+ },
+ {
+  "id": "w1",
+  "text": "of",
+  "start": 0.385,
+  "end": 0.54
+ },
+ {
+  "id": "w2",
+  "text": "ten",
+  "start": 0.54,
+  "end": 0.803
+ },
+ {
+  "id": "w3",
+  "text": "cheats",
+  "start": 0.803,
+  "end": 1.19
+ },
+ {
+  "id": "w4",
+  "text": "caught,",
+  "start": 1.19,
+  "end": 1.531
+ },
+ {
+  "id": "w5",
+  "text": "on",
+  "start": 1.654,
+  "end": 1.856
+ },
+ {
+  "id": "w6",
+  "text": "changes",
+  "start": 1.856,
+  "end": 2.243
+ },
+ {
+  "id": "w7",
+  "text": "it",
+  "start": 2.243,
+  "end": 2.367
+ },
+ {
+  "id": "w8",
+  "text": "never",
+  "start": 2.367,
+  "end": 2.692
+ },
+ {
+  "id": "w9",
+  "text": "saw.",
+  "start": 2.692,
+  "end": 3.11
+ }
+]

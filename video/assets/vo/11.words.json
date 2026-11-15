@@ -1,0 +1,56 @@
+[
+ {
+  "id": "w0",
+  "text": "The",
+  "start": 0.06,
+  "end": 0.246
+ },
+ {
+  "id": "w1",
+  "text": "exact",
+  "start": 0.246,
+  "end": 0.695
+ },
+ {
+  "id": "w2",
+  "text": "line.",
+  "start": 0.695,
+  "end": 1.02
+ },
+ {
+  "id": "w3",
+  "text": "The",
+  "start": 2.196,
+  "end": 2.305
+ },
+ {
+  "id": "w4",
+  "text": "question",
+  "start": 2.305,
+  "end": 2.784
+ },
+ {
+  "id": "w5",
+  "text": "that",
+  "start": 2.784,
+  "end": 2.939
+ },
+ {
+  "id": "w6",
+  "text": "fired.",
+  "start": 2.939,
+  "end": 3.357
+ },
+ {
+  "id": "w7",
+  "text": "The",
+  "start": 4.255,
+  "end": 4.379
+ },
+ {
+  "id": "w8",
+  "text": "score.",
+  "start": 4.379,
+  "end": 4.828
+ }
+]

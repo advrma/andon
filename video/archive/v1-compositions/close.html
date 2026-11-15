@@ -1,0 +1,108 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans.woff2") format("woff2");
+      font-weight: 400 600;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      --ink: #16181d;
+      --graphite: #5e6168;
+      --pass: #1f8a5b;
+    }
+    #close-stage {
+      position: absolute;
+      inset: 0;
+    }
+    #close-lockup {
+      position: absolute;
+      left: 240px;
+      top: 300px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    #close-mark {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    #close-mark-fill {
+      position: absolute;
+      inset: 0;
+      background: var(--ink);
+      transform-origin: 50% 100%;
+    }
+    #close-name {
+      font-size: 56px;
+      font-weight: 600;
+      color: var(--ink);
+      clip-path: inset(0 100% 0 0);
+    }
+    .line {
+      position: absolute;
+      left: 240px;
+      width: 1440px;
+      font-size: 72px;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--ink);
+      letter-spacing: -0.015em;
+    }
+    #close-l1 {
+      top: 440px;
+    }
+    #close-l2 {
+      top: 540px;
+    }
+    #close-l2 b {
+      font-weight: 600;
+      color: var(--pass);
+    }
+    #close-url {
+      position: absolute;
+      left: 240px;
+      top: 720px;
+      font-size: 32px;
+      color: var(--graphite);
+    }
+  </style>
+
+  <div id="root" data-composition-id="close" data-width="1920" data-height="1080">
+    <div id="close-stage" class="clip" data-start="0" data-duration="6" data-track-index="0">
+     <div id="close-fade" style="position: absolute; inset: 0">
+      <div id="close-lockup">
+        <div id="close-mark"><div id="close-mark-fill"></div></div>
+        <div id="close-name">Andon</div>
+      </div>
+      <div class="line" id="close-l1" data-var-text="promise_1">CI tells you the tests passed.</div>
+      <div class="line" id="close-l2">Andon tells you if they were <b>earned</b>.</div>
+      <div id="close-url" data-var-text="repo_url">github.com/aayushswami123/andon</div>
+     </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#close-fade", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0);
+    gsap.set("#close-l2", { opacity: 0 });
+    gsap.set("#close-url", { opacity: 0 });
+    gsap.set("#close-mark-fill", { scaleY: 0 });
+    // Line 1 is there on the cut; line 2 blurs in on the voice; the mark is performed; then the URL.
+    tl.fromTo("#close-l1", { filter: "blur(8px)" }, { filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 0);
+    tl.fromTo("#close-l2", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 2.3);
+    tl.to("#close-mark-fill", { scaleY: 1, duration: 0.2, ease: "power2.out" }, 3.0);
+    tl.fromTo("#close-name", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.3, ease: "power3.out" }, 3.15);
+    tl.to("#close-url", { opacity: 1, duration: 0.3, ease: "power2.out" }, 3.6);
+    // Fade to page colour, landing just before the last frame.
+    tl.to("#close-fade", { opacity: 0, duration: 0.65, ease: "power2.inOut" }, 5.3);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["close"] = tl;
+    tl.seek(0);
+  </script>
+</template>

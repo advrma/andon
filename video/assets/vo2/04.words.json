@@ -1,0 +1,44 @@
+[
+ {
+  "id": "w0",
+  "text": "It",
+  "start": 0.06,
+  "end": 0.184
+ },
+ {
+  "id": "w1",
+  "text": "shows",
+  "start": 0.184,
+  "end": 0.447
+ },
+ {
+  "id": "w2",
+  "text": "the",
+  "start": 0.447,
+  "end": 0.54
+ },
+ {
+  "id": "w3",
+  "text": "exact",
+  "start": 0.54,
+  "end": 0.927
+ },
+ {
+  "id": "w4",
+  "text": "line",
+  "start": 0.989,
+  "end": 1.206
+ },
+ {
+  "id": "w5",
+  "text": "it",
+  "start": 1.206,
+  "end": 1.298
+ },
+ {
+  "id": "w6",
+  "text": "caught.",
+  "start": 1.298,
+  "end": 1.654
+ }
+]

@@ -1,0 +1,80 @@
+[
+ {
+  "id": "w0",
+  "text": "Plain",
+  "start": 0.06,
+  "end": 0.385
+ },
+ {
+  "id": "w1",
+  "text": "code",
+  "start": 0.385,
+  "end": 0.695
+ },
+ {
+  "id": "w2",
+  "text": "checks",
+  "start": 0.695,
+  "end": 0.958
+ },
+ {
+  "id": "w3",
+  "text": "the",
+  "start": 0.958,
+  "end": 1.051
+ },
+ {
+  "id": "w4",
+  "text": "facts.",
+  "start": 1.051,
+  "end": 1.531
+ },
+ {
+  "id": "w5",
+  "text": "A",
+  "start": 2.041,
+  "end": 2.103
+ },
+ {
+  "id": "w6",
+  "text": "System",
+  "start": 2.103,
+  "end": 2.428
+ },
+ {
+  "id": "w7",
+  "text": "One",
+  "start": 2.428,
+  "end": 2.583
+ },
+ {
+  "id": "w8",
+  "text": "model",
+  "start": 2.583,
+  "end": 2.877
+ },
+ {
+  "id": "w9",
+  "text": "makes",
+  "start": 2.877,
+  "end": 3.125
+ },
+ {
+  "id": "w10",
+  "text": "the",
+  "start": 3.125,
+  "end": 3.202
+ },
+ {
+  "id": "w11",
+  "text": "judgment",
+  "start": 3.202,
+  "end": 3.589
+ },
+ {
+  "id": "w12",
+  "text": "calls.",
+  "start": 3.589,
+  "end": 3.992
+ }
+]

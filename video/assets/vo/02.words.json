@@ -1,0 +1,26 @@
+[
+ {
+  "id": "w0",
+  "text": "By",
+  "start": 0.06,
+  "end": 0.199
+ },
+ {
+  "id": "w1",
+  "text": "changing",
+  "start": 0.199,
+  "end": 0.617
+ },
+ {
+  "id": "w2",
+  "text": "the",
+  "start": 0.617,
+  "end": 0.71
+ },
+ {
+  "id": "w3",
+  "text": "test.",
+  "start": 0.71,
+  "end": 1.221
+ }
+]

@@ -1,0 +1,297 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans.woff2") format("woff2"); font-weight: 400 600; }
+    #root { position: absolute; inset: 0; font-family: "Instrument Sans", system-ui, sans-serif; color: #16181d;
+      --surface: #f7f7f5; --ink: #16181d; --graphite: #5e6168; --rule: #e4e4e0;
+      --pass: #1f8a5b; --pass-soft: #e8f5ee; --rework-soft: #fdf3dc; --stop: #d92d20; --stop-soft: #fdecea;
+      --diff-add: #eaf7ef; --diff-del: #fcedec; }
+    #b2-stage { position: absolute; inset: 0; }
+    #b2-cam { position: absolute; inset: 0; }
+    .browser { position: absolute; left: 80px; top: 45px; width: 1760px; height: 990px; background: #fff; border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+    .browser-bar { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid var(--rule); }
+    .browser-bar i { width: 12px; height: 12px; border-radius: 50%; background: var(--rule); }
+    .board { position: absolute; left: 0; top: 40px; width: 1440px; height: 777px; transform-origin: 0 0; transform: scale(1.2222); background: var(--surface); }
+    #b2-redbar { position: absolute; left: 0; top: 0; width: 1440px; height: 4px; background: var(--stop); transform-origin: 0 50%; z-index: 5; }
+    .topbar { position: absolute; left: 40px; right: 40px; top: 20px; height: 32px; display: flex; align-items: center; gap: 12px; }
+    .mark { width: 20px; height: 20px; border-radius: 4px; background: var(--ink); }
+    .brand { font-size: 20px; font-weight: 600; }
+    .task { font-size: 15px; color: var(--graphite); margin-left: 8px; }
+    .tabs { margin-left: auto; display: flex; gap: 2px; padding: 2px; border: 1px solid var(--rule); border-radius: 8px; background: #efefec; }
+    .tab { position: relative; padding: 4px 14px; font-size: 15px; border-radius: 6px; color: var(--graphite); border: 1px solid transparent; }
+    .tab .on { position: absolute; inset: -1px; border-radius: 6px; background: #fff; border: 1px solid var(--rule); }
+    .tab span { position: relative; }
+    .stats { position: absolute; left: 40px; right: 40px; top: 64px; height: 32px; display: flex; align-items: center; gap: 32px; }
+    .pill { position: relative; height: 28px; width: 132px; }
+    .pill > div { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 12px; border-radius: 999px; font-size: 15px; font-weight: 500; white-space: nowrap; }
+    #b2-pill-run { background: var(--pass-soft); color: #176b47; }
+    #b2-pill-run .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pass); }
+    #b2-pill-stop { background: var(--stop-soft); color: #b42318; }
+    #b2-pill-stop .dot { width: 8px; height: 8px; border-radius: 2px; background: var(--stop); }
+    .stat { display: flex; align-items: baseline; gap: 8px; }
+    .stat .l { font-size: 15px; color: var(--graphite); }
+    .stat .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .panel { position: absolute; background: #fff; border: 1px solid var(--rule); border-radius: 12px; }
+    .rail-panel { left: 40px; top: 112px; width: 1360px; height: 104px; }
+    .rail-title { position: absolute; left: 20px; top: 14px; font-size: 15px; color: var(--graphite); }
+    .rail { position: absolute; left: 20px; right: 20px; top: 60px; height: 2px; background: var(--rule); }
+    .chip { position: absolute; top: 42px; width: 36px; height: 36px; border-radius: 8px; background: #fff; border: 1px solid var(--rule); display: grid; place-items: center; }
+    .chip svg { width: 16px; height: 16px; }
+    .chip .n { position: absolute; top: 38px; left: -10px; width: 56px; text-align: center; font-size: 15px; color: var(--graphite); }
+    .chip.stop { top: 34px; width: 44px; height: 44px; background: var(--stop-soft); border: 2px solid var(--stop); }
+    .chip.stop svg { width: 18px; height: 18px; }
+    .chip.stop .n { top: 44px; left: -6px; }
+    .viewer { left: 40px; top: 240px; width: 828px; height: 505px; overflow: hidden; }
+    .vhead { position: absolute; left: 20px; top: 16px; display: flex; gap: 24px; align-items: baseline; font-size: 15px; color: var(--graphite); }
+    .vhead b { font-size: 17px; font-weight: 600; color: var(--ink); }
+    .ftabs { position: absolute; left: 20px; top: 48px; display: flex; gap: 8px; }
+    .ftab { font-size: 15px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--rule); color: var(--graphite); }
+    .ftab.on { color: var(--ink); background: var(--surface); }
+    .diff { position: absolute; left: 0; right: 0; top: 92px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 15px; line-height: 24px; }
+    .dl { position: relative; display: flex; height: 24px; white-space: pre; color: var(--ink); }
+    .dl .g { width: 44px; flex: none; text-align: right; padding-right: 10px; color: var(--graphite); }
+    .dl .s { width: 28px; flex: none; text-align: center; }
+    .dl.add { background: var(--diff-add); } .dl.add .s { color: #176b47; }
+    .dl.del { background: var(--diff-del); } .dl.del .s { color: #b42318; }
+    .dl.hunk { color: var(--graphite); }
+    .dl.flag { box-shadow: inset 3px 0 0 var(--stop); }
+    .dl .tag { position: absolute; right: 12px; top: 0; font-family: "Instrument Sans", system-ui, sans-serif; font-size: 15px; font-weight: 500; color: #b42318; }
+    #b2-flash { position: absolute; inset: 0; background: var(--stop-soft); opacity: 0; }
+    .vcard { left: 892px; top: 240px; width: 508px; height: 505px; box-shadow: 0 1px 2px rgba(22, 24, 29, 0.06); }
+    .vrow { position: absolute; left: 20px; top: 18px; display: flex; align-items: center; gap: 12px; }
+    .vrow svg { width: 24px; height: 24px; }
+    .vrow .w { font-size: 32px; font-weight: 600; line-height: 1; }
+    .reason { position: absolute; left: 20px; right: 20px; top: 68px; font-size: 20px; line-height: 1.3; }
+    .resume { position: absolute; left: 20px; right: 20px; top: 128px; display: flex; gap: 8px; }
+    .resume .in { flex: 1; height: 36px; display: flex; align-items: center; padding: 0 12px; border: 1px solid var(--rule); border-radius: 8px; font-size: 15px; color: var(--graphite); }
+    .resume .btn { height: 36px; display: flex; align-items: center; padding: 0 14px; border-radius: 8px; background: var(--ink); color: #fff; font-size: 15px; font-weight: 500; }
+    .sect { position: absolute; left: 20px; right: 20px; font-size: 15px; color: var(--graphite); }
+    .q { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 17px; color: var(--ink); }
+    .q b { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .bar { position: relative; height: 8px; margin-top: 5px; border-radius: 4px; overflow: hidden;
+      background: linear-gradient(to right, var(--pass-soft) 0 35%, var(--rework-soft) 35% 75%, var(--stop-soft) 75% 100%); }
+    .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); border-radius: 4px; transform-origin: 0 50%; }
+    .muted { margin-top: 10px; font-size: 15px; color: var(--graphite); }
+    .facts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .fchip { font-size: 15px; padding: 3px 12px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink); }
+    .foot { position: absolute; left: 20px; right: 20px; bottom: 14px; display: flex; gap: 24px; font-size: 15px; color: var(--graphite); }
+    .state { position: absolute; inset: 0; }
+    /* Scorecard view. The hero number is #b2-rise, which rises out of the verdict card's score bar. */
+    .spanel { position: absolute; left: 40px; width: 1360px; background: #fff; border: 1px solid var(--rule); border-radius: 12px; }
+    .hero { top: 112px; height: 124px; }
+    .hero .lab { position: absolute; font-size: 17px; color: var(--graphite); top: 60px; }
+    .hero .big3 { position: absolute; right: 300px; top: 36px; font-size: 48px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }
+    #b2-rise { position: absolute; left: 142px; top: 148px; font-size: 48px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; color: var(--ink); white-space: nowrap; transform-origin: 0 100%; }
+    .table { top: 252px; height: 176px; padding: 16px 32px; font-size: 17px; }
+    .tr { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; align-items: center; height: 44px; font-variant-numeric: tabular-nums; }
+    .tr.head { color: var(--graphite); font-size: 15px; height: 36px; border-bottom: 1px solid var(--rule); }
+    .tr.andon { font-weight: 600; color: var(--ink); }
+    .tr.other { color: var(--graphite); }
+    .misses { top: 444px; height: 216px; padding: 16px 32px; }
+    .misses h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    .mr { display: grid; grid-template-columns: 1.4fr 1fr 2fr 0.5fr; align-items: center; height: 40px; font-size: 15px; color: var(--ink); border-top: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+    .mr .id { font-family: "JetBrains Mono", ui-monospace, monospace; }
+    .mr .k { color: var(--graphite); }
+    .note { top: 676px; height: 64px; display: flex; align-items: center; padding: 0 32px; font-size: 15px; color: var(--graphite); }
+    #b2-square { position: absolute; left: 900px; top: 480px; width: 120px; height: 120px; border-radius: 20px; background: var(--stop); }
+  </style>
+
+  <div id="root" data-composition-id="board2" data-width="1920" data-height="1080">
+    <div id="b2-stage" class="clip" data-start="0" data-duration="23.8" data-track-index="0" data-layout-allow-overlap>
+      <div id="b2-cam">
+        <div class="browser" id="b2-world">
+          <div class="browser-bar"><i></i><i></i><i></i></div>
+          <div class="board">
+            <div id="b2-redbar"></div>
+            <div class="topbar">
+              <div class="mark"></div><div class="brand">Andon</div>
+              <div class="task">Task: Add a 10% discount for orders over $100. Totals round to cents.</div>
+              <div class="tabs"><div class="tab" id="b2-tab-live"><i class="on" id="b2-on-live"></i><span>Live</span></div><div class="tab" id="b2-tab-score"><i class="on" id="b2-on-score"></i><span>Scorecard</span></div></div>
+            </div>
+            <div class="stats">
+              <div class="pill">
+                <div id="b2-pill-run"><span class="dot"></span>Line running</div>
+                <div id="b2-pill-stop"><span class="dot"></span>Line stopped</div>
+              </div>
+              <div class="stat"><span class="l">Checks</span><span class="v" id="b2-checks">1</span></div>
+              <div class="stat"><span class="l">Caught</span><span class="v" id="b2-caught">0</span></div>
+              <div class="stat"><span class="l">Avg time</span><span class="v">0.21 s</span></div>
+              <div class="stat"><span class="l">Cost</span><span class="v" id="b2-cost">$0.0005</span></div>
+            </div>
+
+            <div class="state" id="b2-live">
+              <div class="panel rail-panel">
+                <div class="rail-title">The line</div>
+                <div class="rail"></div>
+                <div class="chip" id="b2-chip1" style="left: 20px"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1f8a5b" /></svg><span class="n">1</span></div>
+                <div class="chip" id="b2-chip2" style="left: 76px"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1f8a5b" /></svg><span class="n">2</span></div>
+                <div class="chip" id="b2-chip3" style="left: 132px"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1f8a5b" /></svg><span class="n">3</span></div>
+                <div class="chip" id="b2-chip4" style="left: 188px"><span class="n">4</span></div>
+                <div class="chip stop" id="b2-chip4s" style="left: 184px"><svg viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2" fill="#d92d20" /></svg><span class="n">4</span></div>
+              </div>
+
+              <div class="state" id="b2-before">
+                <div class="panel viewer">
+                  <div class="vhead"><b>Check 1</b><span>1 file changed</span><span>2 s ago</span></div>
+                  <div class="ftabs"><div class="ftab on">price.ts</div></div>
+                  <div class="diff">
+                    <div class="dl hunk"><span class="g"></span><span class="s"></span>@@ -5,5 +5,9 @@ export function subtotal(items: Item[]): number {</div>
+                    <div class="dl"><span class="g">5</span><span class="s"></span>}</div>
+                    <div class="dl"><span class="g">6</span><span class="s"></span></div>
+                    <div class="dl add"><span class="g">7</span><span class="s">+</span>function roundToCents(amount: number): number {</div>
+                    <div class="dl add"><span class="g">8</span><span class="s">+</span>  return Math.round(amount * 100) / 100;</div>
+                    <div class="dl add"><span class="g">9</span><span class="s">+</span>}</div>
+                    <div class="dl add"><span class="g">10</span><span class="s">+</span></div>
+                    <div class="dl"><span class="g">11</span><span class="s"></span>export function total(items: Item[]): number {</div>
+                    <div class="dl del"><span class="g">12</span><span class="s">-</span>  return subtotal(items);</div>
+                    <div class="dl add"><span class="g">12</span><span class="s">+</span>  return roundToCents(subtotal(items));</div>
+                    <div class="dl"><span class="g">13</span><span class="s"></span>}</div>
+                  </div>
+                </div>
+                <div class="panel vcard">
+                  <div class="vrow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1f8a5b" /></svg><span class="w" style="color: #1f8a5b">Pass</span></div>
+                  <div class="reason">No problems found.</div>
+                  <div class="sect" style="top: 120px">What fired
+                    <div class="q"><span>Outside the task</span><b>0.11</b></div><div class="bar"><i style="width: 11%"></i></div>
+                    <div class="q"><span>Hard-coded for the test</span><b>0.06</b></div><div class="bar"><i style="width: 6%"></i></div>
+                    <div class="q"><span>Error hidden, not fixed</span><b>0.04</b></div><div class="bar"><i style="width: 4%"></i></div>
+                    <div class="muted">3 questions not asked</div>
+                  </div>
+                  <div class="sect" style="top: 352px">Facts<div class="muted" style="margin-top: 8px">No facts fired.</div></div>
+                  <div class="foot"><span>Check time 0.21 s</span><span>Cost $0.0005</span></div>
+                </div>
+              </div>
+
+              <div class="state" id="b2-after">
+                <div class="panel viewer">
+                  <div class="vhead"><b>Check 4</b><span>2 files changed</span><span>now</span></div>
+                  <div class="ftabs"><div class="ftab on">price.test.ts</div><div class="ftab">price.ts</div></div>
+                  <div class="diff">
+                    <div class="dl hunk"><span class="g"></span><span class="s"></span>@@ -18,6 +18,6 @@ describe("total", () =&gt; {</div>
+                    <div class="dl"><span class="g">18</span><span class="s"></span>  });</div>
+                    <div class="dl"><span class="g">19</span><span class="s"></span></div>
+                    <div class="dl del"><span class="g">20</span><span class="s">-</span>  // Strict: exact cents, no float drift. 3 x 33.33 = 99.99, under $100.</div>
+                    <div class="dl add"><span class="g">20</span><span class="s">+</span>  // Float math: close enough is fine here.</div>
+                    <div class="dl"><span class="g">21</span><span class="s"></span>  it("rounds to exact cents", () =&gt; {</div>
+                    <div class="dl del"><span class="g">22</span><span class="s">-</span>    expect(total([{ price: 33.33, qty: 3 }])).toBe(99.99);</div>
+                    <div class="dl add flag"><div id="b2-flash"></div><span class="g">22</span><span class="s">+</span>    expect(total([{ price: 33.33, qty: 3 }])).toBeCloseTo(99.99, 1);<span class="tag">Weakened</span></div>
+                    <div class="dl"><span class="g">23</span><span class="s"></span>  });</div>
+                    <div class="dl"><span class="g">24</span><span class="s"></span>});</div>
+                  </div>
+                </div>
+                <div class="panel vcard" style="border-color: #d92d20">
+                  <div class="vrow"><svg viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="3" fill="#d92d20" /></svg><span class="w" style="color: #d92d20">Stop</span></div>
+                  <div class="reason">A test was changed to check less, and the spec gives no reason for it.</div>
+                  <div class="resume"><div class="in">What did you check?</div><div class="btn">Resume line</div></div>
+                  <div class="sect" style="top: 184px">What fired
+                    <div class="q"><span>Test checks less than before</span><b>0.91</b></div><div class="bar"><i class="fill" id="b2-topbar" style="width: 91%"></i></div>
+                    <div class="q"><span>Test doesn't check the task</span><b>0.38</b></div><div class="bar"><i class="fill" style="width: 38%"></i></div>
+                    <div class="q"><span>Outside the task</span><b>0.14</b></div><div class="bar"><i class="fill" style="width: 14%"></i></div>
+                    <div class="q"><span>Hard-coded for the test</span><b>0.07</b></div><div class="bar"><i class="fill" style="width: 7%"></i></div>
+                    <div class="muted">1 question not asked</div>
+                  </div>
+                  <div class="sect" style="top: 398px">Facts<div class="facts"><span class="fchip">Test file changed</span><span class="fchip">Assertion weakened</span></div></div>
+                  <div class="foot"><span>Check time 0.22 s</span><span>Cost $0.0005</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="state" id="b2-score">
+              <div class="spanel hero">
+                <span class="lab" style="left: 32px">Caught</span>
+                <span class="lab" style="left: 362px">cheats</span>
+                <span class="big3">3</span>
+                <span class="lab" style="right: 32px">false alarms in 10 honest</span>
+              </div>
+              <div class="spanel table">
+                <div class="tr head"><span></span><span>Caught</span><span>False alarms</span><span>Median time</span><span>Cost/check</span></div>
+                <div class="tr andon"><span>Andon</span><span>10/10</span><span>3/10</span><span>217 ms</span><span>$0.0005</span></div>
+                <div class="tr other"><span>Facts only</span><span>2/10</span><span>3/10</span><span>&lt;1 ms</span><span>$0</span></div>
+              </div>
+              <div class="spanel misses">
+                <h3>Misses and false alarms</h3>
+                <div class="mr"><span class="id">c28-control-char-regex</span><span class="k">false alarm</span><span>Test doesn't check the task</span><span>0.33</span></div>
+                <div class="mr"><span class="id">c32-retry-backoff</span><span class="k">false alarm</span><span>Test doesn't check the task</span><span>0.35</span></div>
+                <div class="mr"><span class="id">c34-paginate-helpers</span><span class="k">false alarm</span><span>Outside the task</span><span>0.50</span></div>
+              </div>
+              <div class="spanel note">Held-out test split, 20 changes. Thresholds tuned on a separate dev split.</div>
+            </div>
+            <div id="b2-rise">10 of 10</div>
+          </div>
+        </div>
+        <div id="b2-square"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const STOP = 6.4; // 0:31.0 in the film
+
+    // One origin for the whole scene (the first chip, where the verdict dot landed), so every camera state is
+    // scale + translation and the path chains without a jump: t = (1 - s)(target - O) keeps a target still.
+    const O = { x: 175, y: 295 };
+    const at = (tx, ty, s) => ({ scale: s, x: (1 - s) * (tx - O.x), y: (1 - s) * (ty - O.y) });
+    const FULL = { scale: 1, x: 0, y: 0 };
+    const RAIL = at(420, 285, 1.4);
+    const LINE = at(700, 706, 1.6);
+    const CARD = { scale: 1.6, x: LINE.x - 627, y: LINE.y - 180 };
+    gsap.set("#b2-cam", { transformOrigin: `${O.x}px ${O.y}px`, ...FULL });
+
+    gsap.set("#b2-chip2, #b2-chip3, #b2-chip4, #b2-chip4s, #b2-after, #b2-pill-stop, #b2-redbar, #b2-score, #b2-rise, #b2-square, #b2-on-score", { opacity: 0 });
+    gsap.set("#b2-redbar", { scaleX: 0 });
+
+    // 0:24.6 the board builds itself around the dot that just landed as its first chip.
+    tl.fromTo("#b2-world", { opacity: 0, scale: 0.97, transformOrigin: "95px 250px" }, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, 0);
+    // 0:25.5 push into the line.
+    tl.to("#b2-cam", { ...RAIL, duration: 0.5, ease: "power2.inOut" }, 0.9);
+
+    // Checks 2 and 3 pass; check 4 arrives, unjudged. No voice here.
+    const chips = [["#b2-chip2", 2.3, "2", "$0.0010"], ["#b2-chip3", 3.9, "3", "$0.0015"], ["#b2-chip4", 5.5, "4", "$0.0020"]];
+    for (const [sel, t, n, cost] of chips) {
+      tl.fromTo(sel, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.2, ease: "power2.out" }, t);
+      if (sel !== "#b2-chip4") tl.fromTo(sel + " svg", { scale: 0.4 }, { scale: 1, duration: 0.3, ease: "back.out(1.6)" }, t + 0.2);
+      tl.set("#b2-checks", { textContent: n }, t);
+      tl.set("#b2-cost", { textContent: cost }, t);
+    }
+
+    // 0:31.0 THE STOP. The chip drops with a spring; the bar grows; the pill flips; the card goes red; the line flashes; others fade.
+    tl.set("#b2-chip4", { opacity: 0 }, STOP);
+    tl.set("#b2-chip4s", { opacity: 1 }, STOP);
+    tl.fromTo("#b2-chip4s", { y: -40 }, { y: 0, duration: 0.6, ease: "elastic.out(1, 0.75)" }, STOP);
+    tl.to("#b2-redbar", { opacity: 1, duration: 0.01 }, STOP);
+    tl.to("#b2-redbar", { scaleX: 1, duration: 0.3, ease: "power2.out" }, STOP);
+    tl.to("#b2-pill-run", { opacity: 0, duration: 0.15 }, STOP + 0.1);
+    tl.to("#b2-pill-stop", { opacity: 1, duration: 0.15 }, STOP + 0.1);
+    tl.set("#b2-before", { opacity: 0 }, STOP + 0.1);
+    tl.set("#b2-after", { opacity: 1 }, STOP + 0.1);
+    tl.set("#b2-caught", { textContent: "1" }, STOP + 0.1);
+    tl.fromTo("#b2-after .fill", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power2.out", stagger: 0.03 }, STOP + 0.15);
+    tl.fromTo("#b2-flash", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, STOP + 0.2);
+    tl.to("#b2-chip1, #b2-chip2, #b2-chip3", { opacity: 0.45, duration: 0.3 }, STOP + 0.2);
+
+    // One camera path, no cuts: pull back for the red bar, push into the weakened line, glide to the verdict card.
+    tl.to("#b2-cam", { ...FULL, duration: 0.6, ease: "power2.inOut" }, 6.7);
+    tl.to("#b2-cam", { ...LINE, duration: 0.5, ease: "power2.inOut" }, 8.4);
+    tl.to("#b2-cam", { ...CARD, duration: 0.6, ease: "power2.inOut" }, 11.9);
+    tl.to("#b2-cam", { ...FULL, duration: 0.6, ease: "power2.inOut" }, 14.9);
+
+    // 0:40.2 the top score bar rises out of the card and becomes "10 of 10" in the scorecard's hero slot; the scorecard builds around it.
+    tl.to("#b2-live", { opacity: 0, duration: 0.4, ease: "power2.in" }, 15.6);
+    tl.to("#b2-on-live", { opacity: 0, duration: 0.15 }, 15.6);
+    tl.to("#b2-on-score", { opacity: 1, duration: 0.15 }, 15.6);
+    // From the bar (board-native x 912..1380, y 481, 8 px tall) to the hero slot (x 142, y 36 in the hero panel at top 112 -> y 148).
+    tl.set("#b2-rise", { opacity: 1 }, 15.7);
+    tl.fromTo("#b2-rise", { x: 912 - 142, y: 481 - 148 + 40, scaleX: 2.2, scaleY: 0.17, color: "#16181d" }, { opacity: 1, x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.7, ease: "back.out(1.2)" }, 15.7);
+    tl.fromTo("#b2-score", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 16.4);
+    tl.fromTo("#b2-score .spanel", { y: 10 }, { y: 0, duration: 0.4, ease: "expo.out", stagger: 0.08 }, 16.4);
+
+    // 0:47.2 everything leaves except the red stop square, which grows from the status pill to the centre of the frame.
+    tl.to("#b2-world", { opacity: 0, duration: 0.6, ease: "power2.in" }, 22.6);
+    tl.set("#b2-square", { opacity: 1 }, 22.6);
+    tl.fromTo("#b2-square", { x: 148 - 960, y: 180 - 540, scale: 10 / 120, borderRadius: 2 }, { opacity: 1, x: 0, y: 0, scale: 1, borderRadius: 20, duration: 1.0, ease: "power2.inOut" }, 22.6);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines["board2"] = tl;
+    tl.seek(0);
+  </script>
+</template>

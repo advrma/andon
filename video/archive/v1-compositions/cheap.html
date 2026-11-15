@@ -1,0 +1,116 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans.woff2") format("woff2");
+      font-weight: 400 600;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      --ink: #16181d;
+      --graphite: #5e6168;
+      --stop: #d92d20;
+      --diff-del: #fcedec;
+      --diff-add: #eaf7ef;
+    }
+    #cheap-stage {
+      position: absolute;
+      inset: 0;
+    }
+    .row {
+      position: absolute;
+      left: 240px;
+      display: flex;
+      align-items: center;
+      gap: 64px;
+      height: 140px;
+    }
+    #row-weaken {
+      top: 220px;
+    }
+    #row-skip {
+      top: 470px;
+    }
+    #row-hide {
+      top: 720px;
+    }
+    .word {
+      width: 560px;
+      font-size: 120px;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    .word b {
+      font-weight: 600;
+    }
+    .snip {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 92px;
+      padding: 0 32px;
+      border-radius: 12px;
+      background: var(--diff-del);
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 34px;
+      font-weight: 500;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .snip .arrow {
+      color: var(--graphite);
+    }
+    .snip .after {
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: var(--diff-add);
+    }
+  </style>
+
+  <div id="root" data-composition-id="cheap" data-width="1920" data-height="1080">
+    <div id="cheap-stage" class="clip" data-start="0" data-duration="7.3" data-track-index="0">
+     <div id="cheap-fade" style="position: absolute; inset: 0">
+      <div class="row" id="row-weaken">
+        <div class="word">Weaken<b>.</b></div>
+        <div class="snip"><span>toBe(99.99)</span><span class="arrow">→</span><span class="after">toBeTruthy()</span></div>
+      </div>
+      <div class="row" id="row-skip">
+        <div class="word">Skip<b>.</b></div>
+        <div class="snip"><span>it(</span><span class="arrow">→</span><span class="after">it.skip(</span></div>
+      </div>
+      <div class="row" id="row-hide">
+        <div class="word">Hide<b>.</b></div>
+        <div class="snip"><span>throw err</span><span class="arrow">→</span><span class="after">catch (e) {}</span></div>
+      </div>
+     </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#cheap-fade", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0);
+    // The three words are there from the start in light grey ("the cheap fix"); each turns ink as the voice says it,
+    // and its snippet arrives beside it. No slide.
+    gsap.set(".snip", { opacity: 0 });
+    tl.fromTo(".word", { opacity: 0, filter: "blur(6px)", color: "#d4d4d0" }, { opacity: 1, filter: "blur(0px)", color: "#d4d4d0", duration: 0.2, ease: "power2.out", stagger: 0.07 }, 0.1);
+    const land = [
+      ["#row-weaken", 1.6],
+      ["#row-skip", 2.5],
+      ["#row-hide", 3.6],
+    ];
+    for (const [sel, at] of land) {
+      tl.to(sel + " .word", { color: "#16181d", duration: 0.15, ease: "power2.out" }, at);
+      tl.fromTo(sel + " .word b", { color: "#d4d4d0" }, { color: "#d92d20", duration: 0.15, ease: "power2.out" }, at);
+      tl.fromTo(sel + " .snip", { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, at + 0.15);
+    }
+    tl.to("#cheap-fade", { opacity: 0, duration: 0.3, ease: "power2.in" }, 7.0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["cheap"] = tl;
+    tl.seek(0);
+  </script>
+</template>

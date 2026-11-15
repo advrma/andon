@@ -1,0 +1,62 @@
+[
+ {
+  "id": "w0",
+  "text": "An",
+  "start": 0.06,
+  "end": 0.261
+ },
+ {
+  "id": "w1",
+  "text": "agent",
+  "start": 0.292,
+  "end": 0.803
+ },
+ {
+  "id": "w2",
+  "text": "adds",
+  "start": 0.865,
+  "end": 1.252
+ },
+ {
+  "id": "w3",
+  "text": "a",
+  "start": 1.252,
+  "end": 1.314
+ },
+ {
+  "id": "w4",
+  "text": "discount.",
+  "start": 1.314,
+  "end": 1.949
+ },
+ {
+  "id": "w5",
+  "text": "Every",
+  "start": 2.986,
+  "end": 3.388
+ },
+ {
+  "id": "w6",
+  "text": "change",
+  "start": 3.388,
+  "end": 3.945
+ },
+ {
+  "id": "w7",
+  "text": "goes",
+  "start": 4.007,
+  "end": 4.317
+ },
+ {
+  "id": "w8",
+  "text": "through",
+  "start": 4.317,
+  "end": 4.549
+ },
+ {
+  "id": "w9",
+  "text": "Andon.",
+  "start": 4.549,
+  "end": 5.06
+ }
+]

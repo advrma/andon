@@ -1,0 +1,56 @@
+[
+ {
+  "id": "w0",
+  "text": "A",
+  "start": 0.06,
+  "end": 0.153
+ },
+ {
+  "id": "w1",
+  "text": "rounding",
+  "start": 0.153,
+  "end": 0.54
+ },
+ {
+  "id": "w2",
+  "text": "test",
+  "start": 0.54,
+  "end": 0.911
+ },
+ {
+  "id": "w3",
+  "text": "fails.",
+  "start": 0.911,
+  "end": 1.391
+ },
+ {
+  "id": "w4",
+  "text": "So",
+  "start": 1.438,
+  "end": 2.01
+ },
+ {
+  "id": "w5",
+  "text": "the",
+  "start": 2.103,
+  "end": 2.32
+ },
+ {
+  "id": "w6",
+  "text": "agent",
+  "start": 2.32,
+  "end": 2.645
+ },
+ {
+  "id": "w7",
+  "text": "loosens",
+  "start": 2.645,
+  "end": 3.032
+ },
+ {
+  "id": "w8",
+  "text": "it.",
+  "start": 3.032,
+  "end": 3.249
+ }
+]

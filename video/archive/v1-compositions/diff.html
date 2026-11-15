@@ -1,0 +1,99 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      --ink: #16181d;
+      --graphite: #5e6168;
+      --pass: #1f8a5b;
+      --stop: #d92d20;
+      --diff-add: #eaf7ef;
+      --diff-del: #fcedec;
+    }
+    #diff-stage {
+      position: absolute;
+      inset: 0;
+    }
+    #diff-block {
+      position: absolute;
+      left: 160px;
+      top: 440px;
+      width: 1600px;
+    }
+    .diff-line {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 88px;
+      padding: 0 32px;
+      border-radius: 12px;
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--graphite);
+      white-space: nowrap;
+    }
+    .diff-line + .diff-line {
+      margin-top: 16px;
+    }
+    .diff-line.del {
+      background: var(--diff-del);
+    }
+    .diff-line.add {
+      background: var(--diff-add);
+    }
+    .sign {
+      width: 48px;
+      flex: none;
+      font-weight: 500;
+    }
+    .del .sign {
+      color: var(--stop);
+    }
+    .add .sign {
+      color: var(--pass);
+    }
+    .hot {
+      color: var(--ink);
+      font-weight: 500;
+    }
+    #diff-strike {
+      position: absolute;
+      left: 80px;
+      top: 42px;
+      height: 4px;
+      width: 1230px;
+      background: var(--stop);
+      transform-origin: 0 50%;
+      border-radius: 2px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="diff" data-width="1920" data-height="1080">
+    <div id="diff-stage" class="clip" data-start="0" data-duration="3.3" data-track-index="0">
+      <div id="diff-block">
+        <div class="diff-line del" id="diff-old">
+          <span class="sign">-</span>
+          <span>expect(total([{ price: 33.33, qty: 3 }]))<span class="hot">.toBe(99.99)</span>;</span>
+          <div id="diff-strike"></div>
+        </div>
+        <div class="diff-line add" id="diff-new">
+          <span class="sign">+</span>
+          <span>expect(total([{ price: 33.33, qty: 3 }]))<span class="hot">.toBeCloseTo(99.99, 1)</span>;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // Hard cut in: both lines are already there. The strike is the only move.
+    tl.fromTo("#diff-strike", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.inOut" }, 0.5);
+    tl.fromTo("#diff-old", { opacity: 1 }, { opacity: 0.55, duration: 0.3, ease: "power2.out" }, 0.8);
+    // Crossfade out into the next section.
+    tl.fromTo("#diff-block", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.in" }, 3.0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["diff"] = tl;
+    tl.seek(0);
+  </script>
+</template>

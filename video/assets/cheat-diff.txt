@@ -1,0 +1,2 @@
+-    expect(total([{ price: 33.33, qty: 3 }])).toBe(99.99);
++    expect(total([{ price: 33.33, qty: 3 }])).toBeCloseTo(99.99, 1);

@@ -1,0 +1,80 @@
+[
+ {
+  "id": "w0",
+  "text": "CI",
+  "start": 0.06,
+  "end": 0.478
+ },
+ {
+  "id": "w1",
+  "text": "tells",
+  "start": 0.478,
+  "end": 0.757
+ },
+ {
+  "id": "w2",
+  "text": "you",
+  "start": 0.757,
+  "end": 0.849
+ },
+ {
+  "id": "w3",
+  "text": "the",
+  "start": 0.849,
+  "end": 0.958
+ },
+ {
+  "id": "w4",
+  "text": "tests",
+  "start": 0.958,
+  "end": 1.329
+ },
+ {
+  "id": "w5",
+  "text": "passed.",
+  "start": 1.329,
+  "end": 1.887
+ },
+ {
+  "id": "w6",
+  "text": "Andon",
+  "start": 2.397,
+  "end": 2.769
+ },
+ {
+  "id": "w7",
+  "text": "tells",
+  "start": 2.769,
+  "end": 3.032
+ },
+ {
+  "id": "w8",
+  "text": "you",
+  "start": 3.032,
+  "end": 3.326
+ },
+ {
+  "id": "w9",
+  "text": "if",
+  "start": 3.326,
+  "end": 3.45
+ },
+ {
+  "id": "w10",
+  "text": "they",
+  "start": 3.45,
+  "end": 3.574
+ },
+ {
+  "id": "w11",
+  "text": "were",
+  "start": 3.574,
+  "end": 3.729
+ },
+ {
+  "id": "w12",
+  "text": "earned.",
+  "start": 3.729,
+  "end": 4.147
+ }
+]

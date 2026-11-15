@@ -1,0 +1,26 @@
+[
+ {
+  "id": "w0",
+  "text": "So",
+  "start": 0.06,
+  "end": 0.339
+ },
+ {
+  "id": "w1",
+  "text": "diffs",
+  "start": 0.339,
+  "end": 0.757
+ },
+ {
+  "id": "w2",
+  "text": "merge",
+  "start": 0.757,
+  "end": 1.113
+ },
+ {
+  "id": "w3",
+  "text": "unread.",
+  "start": 1.113,
+  "end": 1.562
+ }
+]

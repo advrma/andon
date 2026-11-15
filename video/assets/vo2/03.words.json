@@ -1,0 +1,50 @@
+[
+ {
+  "id": "w0",
+  "text": "Andon",
+  "start": 0.06,
+  "end": 0.509
+ },
+ {
+  "id": "w1",
+  "text": "is",
+  "start": 0.509,
+  "end": 0.71
+ },
+ {
+  "id": "w2",
+  "text": "the",
+  "start": 0.71,
+  "end": 0.803
+ },
+ {
+  "id": "w3",
+  "text": "stop",
+  "start": 0.803,
+  "end": 1.113
+ },
+ {
+  "id": "w4",
+  "text": "cord",
+  "start": 1.113,
+  "end": 1.283
+ },
+ {
+  "id": "w5",
+  "text": "for",
+  "start": 1.283,
+  "end": 1.407
+ },
+ {
+  "id": "w6",
+  "text": "coding",
+  "start": 1.407,
+  "end": 1.67
+ },
+ {
+  "id": "w7",
+  "text": "agents.",
+  "start": 1.67,
+  "end": 2.212
+ }
+]

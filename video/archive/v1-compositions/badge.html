@@ -1,0 +1,73 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans.woff2") format("woff2");
+      font-weight: 400 600;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      --pass: #1f8a5b;
+      --pass-soft: #e8f5ee;
+    }
+    #badge-stage {
+      position: absolute;
+      inset: 0;
+    }
+    #badge-cam {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+    }
+    #badge-card {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      width: 760px;
+      height: 200px;
+      padding: 0 56px;
+      border-radius: 16px;
+      background: var(--pass-soft);
+      border: 1px solid #cfe8da;
+    }
+    #badge-card svg {
+      width: 72px;
+      height: 72px;
+      flex: none;
+    }
+    #badge-card span {
+      font-size: 60px;
+      font-weight: 600;
+      color: var(--pass);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+  </style>
+
+  <div id="root" data-composition-id="badge" data-width="1920" data-height="1080">
+    <div id="badge-stage" class="clip" data-start="0" data-duration="3" data-track-index="0">
+      <div id="badge-cam">
+        <div id="badge-card">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="11" fill="#1f8a5b" />
+            <path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>All checks passed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // Fade from page colour, then one slow push for the whole 3 s.
+    tl.fromTo("#badge-cam", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+    tl.fromTo("#badge-cam", { scale: 1.0 }, { scale: 1.1, duration: 3, ease: "power1.inOut" }, 0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["badge"] = tl;
+    tl.seek(0);
+  </script>
+</template>

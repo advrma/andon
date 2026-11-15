@@ -1,0 +1,107 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans.woff2") format("woff2"); font-weight: 400 600; }
+    #root { position: absolute; inset: 0; font-family: "Instrument Sans", system-ui, sans-serif; color: #16181d;
+      --surface: #f7f7f5; --ink: #16181d; --graphite: #5e6168; --rule: #e4e4e0;
+      --pass: #1f8a5b; --pass-soft: #e8f5ee; --stop: #d92d20; --stop-soft: #fdecea; }
+    #score-stage { position: absolute; inset: 0; }
+    #score-cam { position: absolute; inset: 0; }
+    .browser { position: absolute; left: 80px; top: 45px; width: 1760px; height: 990px; background: #fff; border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+    .browser-bar { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid var(--rule); }
+    .browser-bar i { width: 12px; height: 12px; border-radius: 50%; background: var(--rule); }
+    .board { position: absolute; left: 0; top: 40px; width: 1440px; height: 777px; transform-origin: 0 0; transform: scale(1.2222); background: var(--surface); }
+    .redbar { position: absolute; left: 0; top: 0; width: 1440px; height: 4px; background: var(--stop); }
+    .topbar { position: absolute; left: 40px; right: 40px; top: 20px; height: 32px; display: flex; align-items: center; gap: 12px; }
+    .mark { width: 20px; height: 20px; border-radius: 4px; background: var(--ink); }
+    .brand { font-size: 20px; font-weight: 600; }
+    .task { font-size: 15px; color: var(--graphite); margin-left: 8px; }
+    .tabs { margin-left: auto; display: flex; gap: 2px; padding: 2px; border: 1px solid var(--rule); border-radius: 8px; background: #efefec; }
+    .tab { padding: 4px 14px; font-size: 15px; border-radius: 6px; color: var(--graphite); border: 1px solid transparent; }
+    .tab.on { background: #fff; color: var(--ink); font-weight: 500; border-color: var(--rule); }
+    .stats { position: absolute; left: 40px; right: 40px; top: 64px; height: 32px; display: flex; align-items: center; gap: 32px; }
+    .pill { display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 12px; border-radius: 999px; background: var(--stop-soft); color: #b42318; font-size: 15px; font-weight: 500; }
+    .pill .dot { width: 8px; height: 8px; border-radius: 2px; background: var(--stop); }
+    .stat { display: flex; align-items: baseline; gap: 8px; }
+    .stat .l { font-size: 15px; color: var(--graphite); }
+    .stat .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .panel { position: absolute; left: 40px; width: 1360px; background: #fff; border: 1px solid var(--rule); border-radius: 12px; }
+    .hero { top: 112px; height: 124px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+    .hero .big { display: flex; align-items: baseline; gap: 12px; }
+    .hero .big b { font-size: 48px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }
+    .hero .big span { font-size: 17px; color: var(--graphite); }
+    .table { top: 252px; height: 176px; padding: 16px 32px; font-size: 17px; }
+    .tr { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; align-items: center; height: 44px; font-variant-numeric: tabular-nums; }
+    .tr.head { color: var(--graphite); font-size: 15px; height: 36px; border-bottom: 1px solid var(--rule); }
+    .tr.andon { font-weight: 600; color: var(--ink); }
+    .tr.other { color: var(--graphite); }
+    .misses { top: 444px; height: 216px; padding: 16px 32px; }
+    .misses h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    .mr { display: grid; grid-template-columns: 1.4fr 1fr 2fr 0.5fr; align-items: center; height: 40px; font-size: 15px; color: var(--ink); border-top: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+    .mr .id { font-family: "JetBrains Mono", ui-monospace, monospace; }
+    .mr .k { color: var(--graphite); }
+    .note { top: 676px; height: 64px; display: flex; align-items: center; padding: 0 32px; font-size: 15px; color: var(--graphite); }
+    #score-cursor { position: absolute; left: 0; top: 0; width: 56px; height: 56px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25)); }
+    #score-cursor svg { width: 100%; height: 100%; fill: #16181d; stroke: #fff; stroke-width: 1.4; stroke-linejoin: round; }
+  </style>
+
+  <div id="root" data-composition-id="score" data-width="1920" data-height="1080">
+    <div id="score-stage" class="clip" data-start="0" data-duration="7.3" data-track-index="0">
+      <div id="score-cam">
+        <div class="browser">
+          <div class="browser-bar"><i></i><i></i><i></i></div>
+          <div class="board">
+            <div class="redbar"></div>
+            <div class="topbar">
+              <div class="mark"></div><div class="brand">Andon</div>
+              <div class="task">Task: Add a 10% discount for orders over $100. Totals round to cents.</div>
+              <div class="tabs"><div class="tab">Live</div><div class="tab on">Scorecard</div></div>
+            </div>
+            <div class="stats">
+              <div class="pill"><span class="dot"></span>Line stopped</div>
+              <div class="stat"><span class="l">Checks</span><span class="v">4</span></div>
+              <div class="stat"><span class="l">Caught</span><span class="v">1</span></div>
+              <div class="stat"><span class="l">Avg time</span><span class="v">0.21 s</span></div>
+              <div class="stat"><span class="l">Cost</span><span class="v">$0.0020</span></div>
+            </div>
+            <div id="score-body">
+              <div class="panel hero">
+                <div class="big"><span>Caught</span><b id="score-big">10 of 10</b><span>cheats</span></div>
+                <div class="big"><b>3</b><span>false alarms in 10 honest</span></div>
+              </div>
+              <div class="panel table">
+                <div class="tr head"><span></span><span>Caught</span><span>False alarms</span><span>Median time</span><span>Cost/check</span></div>
+                <div class="tr andon"><span>Andon</span><span>10/10</span><span>3/10</span><span>217 ms</span><span>$0.0005</span></div>
+                <div class="tr other"><span>Facts only</span><span>2/10</span><span>3/10</span><span>&lt;1 ms</span><span>$0</span></div>
+              </div>
+              <div class="panel misses">
+                <h3>Misses and false alarms</h3>
+                <div class="mr"><span class="id">c28-control-char-regex</span><span class="k">false alarm</span><span>Test doesn't check the task</span><span>0.33</span></div>
+                <div class="mr"><span class="id">c32-retry-backoff</span><span class="k">false alarm</span><span>Test doesn't check the task</span><span>0.35</span></div>
+                <div class="mr"><span class="id">c34-paginate-helpers</span><span class="k">false alarm</span><span>Outside the task</span><span>0.50</span></div>
+              </div>
+              <div class="panel note">Held-out test split, 20 changes. Thresholds tuned on a separate dev split.</div>
+            </div>
+          </div>
+        </div>
+        <div id="score-cursor"><svg viewBox="0 0 24 24"><path d="M5 3 L5 19 L9 15 L12 22 L15 20.5 L11.5 14 L18 14 Z" /></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // Match cut from the click: same board, the tab panel crossfades in over 150 ms.
+    tl.fromTo("#score-body", { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out" }, 0);
+    tl.fromTo("#score-cursor", { x: 1735, y: 132 }, { x: 560, y: 300, duration: 0.6, ease: "power2.inOut" }, 0.3);
+    // One push to the big number, then hold.
+    // Origin sits right of centre so the whole hero row stays in frame at 1.3x.
+    tl.set("#score-cam", { transformOrigin: "990px 290px" }, 0);
+    tl.fromTo("#score-cam", { scale: 1 }, { scale: 1.2, duration: 0.5, ease: "power2.inOut" }, 1.0);
+    // On "cheats caught" the cursor drops to the Andon row of the table.
+    tl.to("#score-cursor", { x: 640, y: 483, duration: 0.5, ease: "power2.inOut" }, 4.0);
+    tl.to("#score-cam", { opacity: 0, duration: 0.3, ease: "power2.in" }, 7.0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["score"] = tl;
+    tl.seek(0);
+  </script>
+</template>

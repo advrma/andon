@@ -1,0 +1,50 @@
+[
+ {
+  "id": "w0",
+  "text": "Agents",
+  "start": 0.06,
+  "end": 0.478
+ },
+ {
+  "id": "w1",
+  "text": "write",
+  "start": 0.478,
+  "end": 0.695
+ },
+ {
+  "id": "w2",
+  "text": "more",
+  "start": 0.695,
+  "end": 0.865
+ },
+ {
+  "id": "w3",
+  "text": "code",
+  "start": 0.865,
+  "end": 1.236
+ },
+ {
+  "id": "w4",
+  "text": "than",
+  "start": 1.236,
+  "end": 1.438
+ },
+ {
+  "id": "w5",
+  "text": "anyone",
+  "start": 1.438,
+  "end": 1.856
+ },
+ {
+  "id": "w6",
+  "text": "can",
+  "start": 1.856,
+  "end": 2.072
+ },
+ {
+  "id": "w7",
+  "text": "review.",
+  "start": 2.072,
+  "end": 2.459
+ }
+]

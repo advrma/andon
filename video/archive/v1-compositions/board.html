@@ -1,0 +1,154 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans.woff2") format("woff2"); font-weight: 400 600; }
+    #root { position: absolute; inset: 0; font-family: "Instrument Sans", system-ui, sans-serif; color: #16181d;
+      --surface: #f7f7f5; --ink: #16181d; --graphite: #5e6168; --rule: #e4e4e0;
+      --pass: #1f8a5b; --pass-soft: #e8f5ee; --rework-soft: #fdf3dc; --stop: #d92d20; --stop-soft: #fdecea;
+      --diff-add: #eaf7ef; --diff-del: #fcedec; }
+    #board-stage { position: absolute; inset: 0; }
+    #board-cam { position: absolute; inset: 0; }
+    /* Browser card: the recording's frame. The board inside is laid out at 1440 wide, as designed, and scaled up. */
+    .browser { position: absolute; left: 80px; top: 45px; width: 1760px; height: 990px; background: #fff; border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+    .browser-bar { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid var(--rule); }
+    .browser-bar i { width: 12px; height: 12px; border-radius: 50%; background: var(--rule); }
+    .board { position: absolute; left: 0; top: 40px; width: 1440px; height: 777px; transform-origin: 0 0; transform: scale(1.2222); background: var(--surface); }
+    .topbar { position: absolute; left: 40px; right: 40px; top: 20px; height: 32px; display: flex; align-items: center; gap: 12px; }
+    .mark { width: 20px; height: 20px; border-radius: 4px; background: var(--ink); }
+    .brand { font-size: 20px; font-weight: 600; }
+    .task { font-size: 15px; color: var(--graphite); margin-left: 8px; }
+    .tabs { margin-left: auto; display: flex; gap: 2px; padding: 2px; border: 1px solid var(--rule); border-radius: 8px; background: #efefec; }
+    .tab { padding: 4px 14px; font-size: 15px; border-radius: 6px; color: var(--graphite); border: 1px solid transparent; }
+    .tab.on { background: #fff; color: var(--ink); font-weight: 500; border-color: var(--rule); }
+    .stats { position: absolute; left: 40px; right: 40px; top: 64px; height: 32px; display: flex; align-items: center; gap: 32px; }
+    .pill { display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 12px; border-radius: 999px; background: var(--pass-soft); color: #176b47; font-size: 15px; font-weight: 500; }
+    .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pass); }
+    .stat { display: flex; align-items: baseline; gap: 8px; }
+    .stat .l { font-size: 15px; color: var(--graphite); }
+    .stat .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .panel { position: absolute; background: #fff; border: 1px solid var(--rule); border-radius: 12px; }
+    .rail-panel { left: 40px; top: 112px; width: 1360px; height: 104px; }
+    .rail-title { position: absolute; left: 20px; top: 14px; font-size: 15px; color: var(--graphite); }
+    .rail { position: absolute; left: 20px; right: 20px; top: 60px; height: 2px; background: var(--rule); }
+    .chip { position: absolute; top: 42px; width: 36px; height: 36px; border-radius: 8px; background: #fff; border: 1px solid var(--rule); display: grid; place-items: center; }
+    .chip svg { width: 16px; height: 16px; }
+    .chip .n { position: absolute; top: 38px; left: -10px; width: 56px; text-align: center; font-size: 15px; color: var(--graphite); }
+    .chip.sel { border: 2px solid var(--pass); background: var(--pass-soft); }
+    .viewer { left: 40px; top: 240px; width: 828px; height: 505px; overflow: hidden; }
+    .vhead { position: absolute; left: 20px; top: 16px; display: flex; gap: 24px; align-items: baseline; font-size: 15px; color: var(--graphite); }
+    .vhead b { font-size: 17px; font-weight: 600; color: var(--ink); }
+    .ftabs { position: absolute; left: 20px; top: 48px; display: flex; gap: 8px; }
+    .ftab { font-size: 15px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--rule); color: var(--ink); background: var(--surface); }
+    .diff { position: absolute; left: 0; right: 0; top: 92px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 15px; line-height: 24px; }
+    .dl { display: flex; height: 24px; white-space: pre; color: var(--ink); }
+    .dl .g { width: 44px; flex: none; text-align: right; padding-right: 10px; color: var(--graphite); }
+    .dl .s { width: 28px; flex: none; text-align: center; }
+    .dl.add { background: var(--diff-add); } .dl.add .s { color: var(--pass); }
+    .dl.del { background: var(--diff-del); } .dl.del .s { color: var(--stop); }
+    .dl.hunk { color: var(--graphite); }
+    .vcard { left: 892px; top: 240px; width: 508px; height: 505px; box-shadow: 0 1px 2px rgba(22, 24, 29, 0.06); }
+    .vrow { position: absolute; left: 20px; top: 18px; display: flex; align-items: center; gap: 12px; }
+    .vrow svg { width: 24px; height: 24px; }
+    .vrow .w { font-size: 32px; font-weight: 600; color: var(--pass); line-height: 1; }
+    .reason { position: absolute; left: 20px; right: 20px; top: 68px; font-size: 20px; line-height: 1.3; }
+    .sect { position: absolute; left: 20px; right: 20px; font-size: 15px; color: var(--graphite); }
+    .q { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; font-size: 17px; color: var(--ink); }
+    .q b { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .bar { position: relative; height: 8px; margin-top: 6px; border-radius: 4px; overflow: hidden;
+      background: linear-gradient(to right, var(--pass-soft) 0 35%, var(--rework-soft) 35% 75%, var(--stop-soft) 75% 100%); }
+    .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); border-radius: 4px; }
+    .muted { margin-top: 12px; font-size: 15px; color: var(--graphite); }
+    .foot { position: absolute; left: 20px; right: 20px; bottom: 16px; display: flex; gap: 24px; font-size: 15px; color: var(--graphite); }
+    #board-cursor { position: absolute; left: 0; top: 0; width: 56px; height: 56px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25)); }
+    #board-cursor svg { width: 100%; height: 100%; fill: #16181d; stroke: #fff; stroke-width: 1.4; stroke-linejoin: round; }
+  </style>
+
+  <div id="root" data-composition-id="board" data-width="1920" data-height="1080">
+    <div id="board-stage" class="clip" data-start="0" data-duration="6" data-track-index="0">
+      <div id="board-cam">
+        <div class="browser">
+          <div class="browser-bar"><i></i><i></i><i></i></div>
+          <div class="board">
+            <div class="topbar">
+              <div class="mark"></div><div class="brand">Andon</div>
+              <div class="task">Task: Add a 10% discount for orders over $100. Totals round to cents.</div>
+              <div class="tabs"><div class="tab on">Live</div><div class="tab">Scorecard</div></div>
+            </div>
+            <div class="stats">
+              <div class="pill"><span class="dot"></span>Line running</div>
+              <div class="stat"><span class="l">Checks</span><span class="v" id="b-checks">0</span></div>
+              <div class="stat"><span class="l">Caught</span><span class="v">0</span></div>
+              <div class="stat"><span class="l">Avg time</span><span class="v">0.21 s</span></div>
+              <div class="stat"><span class="l">Cost</span><span class="v" id="b-cost">$0.0000</span></div>
+            </div>
+            <div class="panel rail-panel">
+              <div class="rail-title">The line</div>
+              <div class="rail"></div>
+              <div class="chip" id="b-chip1" style="left: 20px"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1f8a5b" /></svg><span class="n">1</span></div>
+              <div class="chip" id="b-chip2" style="left: 76px"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1f8a5b" /></svg><span class="n">2</span></div>
+              <div class="chip sel" id="b-chip3" style="left: 132px"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1f8a5b" /></svg><span class="n">3</span></div>
+            </div>
+            <div id="b-empty" style="position: absolute; left: 40px; top: 300px; width: 1360px; text-align: center; font-size: 17px; color: #5e6168">No checks yet. Run the agent or replay a case.</div>
+            <div class="panel viewer" id="b-viewer">
+              <div class="vhead"><b>Check 3</b><span>1 file changed</span><span>2 s ago</span></div>
+              <div class="ftabs"><div class="ftab">price.ts</div></div>
+              <div class="diff">
+                <div class="dl hunk"><span class="g"></span><span class="s"></span>@@ -12,7 +12,8 @@ function roundToCents(amount: number): number {</div>
+                <div class="dl"><span class="g">12</span><span class="s"></span>}</div>
+                <div class="dl"><span class="g">13</span><span class="s"></span></div>
+                <div class="dl"><span class="g">14</span><span class="s"></span>export function total(items: Item[]): number {</div>
+                <div class="dl del"><span class="g">15</span><span class="s">-</span>  const sub = subtotal(items);</div>
+                <div class="dl add"><span class="g">15</span><span class="s">+</span>  // Round before comparing: float drift on 3 x 33.33 must not tip 99.99 over.</div>
+                <div class="dl add"><span class="g">16</span><span class="s">+</span>  const sub = roundToCents(subtotal(items));</div>
+                <div class="dl"><span class="g">17</span><span class="s"></span>  const discounted = sub &gt; DISCOUNT_THRESHOLD ? sub * (1 - DISCOUNT_RATE) : sub;</div>
+                <div class="dl"><span class="g">18</span><span class="s"></span>  return roundToCents(discounted);</div>
+                <div class="dl"><span class="g">19</span><span class="s"></span>}</div>
+              </div>
+            </div>
+            <div class="panel vcard" id="b-vcard">
+              <div class="vrow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1f8a5b" /></svg><span class="w">Pass</span></div>
+              <div class="reason">No problems found.</div>
+              <div class="sect" style="top: 120px">What fired
+                <div class="q"><span>Outside the task</span><b>0.11</b></div><div class="bar"><i style="width: 11%"></i></div>
+                <div class="q"><span>Hard-coded for the test</span><b>0.06</b></div><div class="bar"><i style="width: 6%"></i></div>
+                <div class="q"><span>Error hidden, not fixed</span><b>0.04</b></div><div class="bar"><i style="width: 4%"></i></div>
+                <div class="muted">3 questions not asked</div>
+              </div>
+              <div class="sect" style="top: 352px">Facts<div class="muted" style="margin-top: 8px">No facts fired.</div></div>
+              <div class="foot"><span>Check time 0.21 s</span><span>Cost $0.0005</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="board-cursor"><svg viewBox="0 0 24 24"><path d="M5 3 L5 19 L9 15 L12 22 L15 20.5 L11.5 14 L18 14 Z" /></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#board-stage", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0);
+    // Three honest checks arrive on the line, one at a time.
+    const chips = [
+      ["#b-chip1", 0.8, "1", "$0.0005"],
+      ["#b-chip2", 1.8, "2", "$0.0010"],
+      ["#b-chip3", 2.8, "3", "$0.0015"],
+    ];
+    gsap.set("#b-viewer, #b-vcard", { opacity: 0 });
+    for (const [sel, at, n, cost] of chips) {
+      tl.fromTo(sel, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.2, ease: "power2.out" }, at);
+      tl.fromTo(sel + " svg", { opacity: 0 }, { opacity: 1, duration: 0.2 }, at + 0.25);
+      tl.set("#b-checks", { textContent: n }, at);
+      tl.set("#b-cost", { textContent: cost }, at);
+    }
+    // The empty-state line leaves as the first check lands; the viewer and card arrive with the third.
+    tl.to("#b-empty", { opacity: 0, duration: 0.2, ease: "power2.in" }, 0.8);
+    tl.to("#b-viewer, #b-vcard", { opacity: 1, duration: 0.25, ease: "power2.out" }, 3.0);
+    // Cursor: in from the bottom right, rests at the end of the rail.
+    tl.fromTo("#board-cursor", { x: 1700, y: 1120 }, { x: 400, y: 330, duration: 0.6, ease: "power3.out" }, 0.3);
+    // One push to the rail, then hold.
+    tl.set("#board-cam", { transformOrigin: "960px 285px" }, 0);
+    tl.fromTo("#board-cam", { scale: 1 }, { scale: 1.4, duration: 0.5, ease: "power2.inOut" }, 3.0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["board"] = tl;
+    tl.seek(0);
+  </script>
+</template>

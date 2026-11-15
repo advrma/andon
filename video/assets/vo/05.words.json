@@ -1,0 +1,86 @@
+[
+ {
+  "id": "w0",
+  "text": "Agents",
+  "start": 0.06,
+  "end": 0.54
+ },
+ {
+  "id": "w1",
+  "text": "learn",
+  "start": 0.54,
+  "end": 0.726
+ },
+ {
+  "id": "w2",
+  "text": "the",
+  "start": 0.726,
+  "end": 0.834
+ },
+ {
+  "id": "w3",
+  "text": "cheap",
+  "start": 0.834,
+  "end": 1.144
+ },
+ {
+  "id": "w4",
+  "text": "fix:",
+  "start": 1.144,
+  "end": 1.654
+ },
+ {
+  "id": "w5",
+  "text": "weaken",
+  "start": 1.685,
+  "end": 2.041
+ },
+ {
+  "id": "w6",
+  "text": "a",
+  "start": 2.041,
+  "end": 2.103
+ },
+ {
+  "id": "w7",
+  "text": "test,",
+  "start": 2.103,
+  "end": 2.552
+ },
+ {
+  "id": "w8",
+  "text": "skip",
+  "start": 2.583,
+  "end": 2.877
+ },
+ {
+  "id": "w9",
+  "text": "a",
+  "start": 2.877,
+  "end": 2.939
+ },
+ {
+  "id": "w10",
+  "text": "check,",
+  "start": 2.939,
+  "end": 3.295
+ },
+ {
+  "id": "w11",
+  "text": "hide",
+  "start": 3.698,
+  "end": 3.93
+ },
+ {
+  "id": "w12",
+  "text": "an",
+  "start": 3.93,
+  "end": 4.054
+ },
+ {
+  "id": "w13",
+  "text": "error.",
+  "start": 4.054,
+  "end": 4.472
+ }
+]
